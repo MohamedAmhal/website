@@ -1,0 +1,46 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}    
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Reviews</h2>
+            <p>Manage all product reviews</p>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Review</th>
+                            <th>Rating</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        {% for r in reviews %}
+                            <tr>
+                                <td>{{forloop.counter}}</td>
+                                <td><b>{{r.product.title}}</b></td>
+                                <td>{{r.user.username|title}}</td>
+                                <td>{{r.review}}</td>
+                                <td>{{r.rating}} Stars</td>
+                                <td>{{r.date|date:"m M, Y"}}</td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}    

@@ -1,0 +1,137 @@
+
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+    <main class="main" id="cart-list">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Shop
+                    <span></span> Cart
+                </div>
+            </div>
+        </div>
+        <div class="container mb-80 mt-50">
+            <div class="row">
+                <div class="col-lg-8 mb-40">
+                    <h1 class="heading-2 mb-10">Your Cart</h1>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-body">There are <span class="text-brand">{{ totalcartitems }}</span> products in your cart</h6>
+                    </div>
+                </div>
+            </div>
+            <form action="" method="POST">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="table-responsive shopping-summery">
+                            <table class="table table-wishlist">
+                                <thead>
+                                    <tr class="main-heading">
+                                        
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Unit Price</th>
+                                        <th scope="col" class="text-center">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        <th scope="col" class="">Refresh</th>
+                                        <th scope="col" class="end">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product_id, item in cart_data.items %}
+                                    <tr class="pt-30">
+                                        <td class="image product-thumbnail pt-40"><img src="{{ item.image }}" alt="#"></td>
+                                        <td class="product-des product-name">
+                                            <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="{% url 'core:product-detail' item.pid %}">{{ item.title }}</a></h6>
+                                        
+                                        </td>
+                                        <td class="price" data-title="Price">
+                                            <h4 class="text-body">${{item.price|floatformat:2}}</h4>
+                                        </td>
+                                        <td class="text-center detail-info" data-title="Stock">
+                                            <div class="mr-15">
+                                                <input type="number" placeholder="Qty" class="w-25 product-qty-{{ product_id }}"  name="" value="{{ item.qty }}" id="">
+                                            </div>
+                                        </td>
+                                        <td class="price" data-title="Price">
+                                            <h4 class="text-brand">${% widthratio item.price 1 item.qty %} </h4>
+                                        </td>
+                                        <td class="action text-center" data-title="Remove"><a style="border: none; background: none;"  class="text-body update-product" data-product="{{ product_id }}"><i class="fi-rs-refresh"></i></a></td>
+                                        <td class="action text-center" data-title="Remove"><a style="border: none; background: none;"  class="text-body delete-product" data-product="{{ product_id }}"><i class="fi-rs-trash"></i></a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <div class="row mt-4">
+                                <h4 class="mb-30">Bio Data</h4>
+                                <div class="row">
+                                    <div class="form-group col-lg-12">
+                                        <label for="">Full Name</label>
+                                        <input type="text" required="" name="full_name" value="{{request.user.username|title}}" placeholder="Full Name">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Email</label>
+                                        <input type="text" required="" name="email"  placeholder="mobile *" value="{{request.user.email}}">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Mobile</label>
+                                        <input type="text" name="mobile" value="{{request.user.profile.phone}}" required="" placeholder="Address *">
+                                    </div>
+                                </div>
+                                <h4 class="mb-30">Shipping Details</h4>
+                                <div class="row">
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Address</label>
+                                        <input type="text" name="address" value="" placeholder="Address">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">City</label>
+                                        <input type="text" name="city"  placeholder="City *" value="">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">State</label>
+                                        <input type="text" name="state" value="" placeholder="State *">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Country</label>
+                                        <input type="text" name="country" value="" placeholder="Country *">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="border p-md-4 cart-totals ml-30">
+                            <div class="table-responsive">
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Tax</p>
+                                        <p>$0</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Shipping</p>
+                                        <p>$0</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Discount</p>
+                                        <p>$0</p>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Total</p>
+                                        <p>${{cart_total_amount}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if totalcartitems %}
+                                <button type=submit" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
+                            {% endif %}                    
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock content %}

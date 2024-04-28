@@ -1,0 +1,114 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+  
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Dashboard</h2>
+            <p>Whole data about your business here</p>
+        </div>
+        <div>
+            <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create Product</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Revenue</h6>
+                        <span>${{ revenue.price|floatformat:2|intcomma }}</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Orders</h6>
+                        <span>{{total_orders_count.count}}</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Products</h6>
+                        <span>{{all_products.count}}</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Monthly Earning</h6>
+                        <span>{{ monthly_revenue.price|floatformat:2|intcomma }}</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <header class="card-header">
+            <h4 class="card-title">Latest orders</h4>
+        </header>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                
+                                <th class="align-middle" scope="col">Order ID</th>
+                                <th class="align-middle" scope="col">Name</th>
+                                <th class="align-middle" scope="col">Email</th>
+                                <th class="align-middle" scope="col">Phone</th>
+                                <th class="align-middle" scope="col">Date</th>
+                                <th class="align-middle" scope="col">Total</th>
+                                <th class="align-middle" scope="col">Payment Status</th>
+                                <th class="align-middle" scope="col">View Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for l in latest_orders %}
+                            <tr>
+                                <td><a href="#" class="fw-bold">#{{l.oid}}</a></td>
+                                <td>{{l.full_name|title}}</td>
+                                <td>{{l.email}}</td>
+                                <td>{{l.phone}}</td>
+                                <td>{{l.order_date}}</td>
+                                <td>${{l.price}}</td>
+                                <td>
+                                    {% if l.paid_status == True %}
+                                    <span class="badge badge-pill badge-soft-success">Paid</span>
+                                    {% else %}
+                                    <span class="badge badge-pill badge-soft-danger">Not Paid</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'useradmin:order_detail' l.id %}" class="btn btn-xs"> View details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
+        

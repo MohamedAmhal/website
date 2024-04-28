@@ -1,0 +1,71 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}  
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Profile setting</h2>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row gx-5">
+                <div class="col-lg-12">
+                    <section class="content-body p-xl-4">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="row gx-3">
+                                        <div class="col-12 mb-3">
+                                            <label class="form-label">Full Name</label>
+                                            <input class="form-control" name="full_name" type="text" value="{{request.user.profile.full_name}}" placeholder="Enter full name" />
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input class="form-control bg-light" name="email" value="{{request.user.email}}" readonly type="text" placeholder="Type here" />
+                                        </div>
+                                        <div class="col-lg-6 mb-3">
+                                            <label class="form-label">Mobile</label>
+                                            <input class="form-control" name="phone" value="{{request.user.profile.phone}}" type="text" placeholder="+123 456 7890" />
+                                        </div>
+                                         <div class="col-lg-12 mb-3">
+                                            <label class="form-label">Bio</label>
+                                            <input class="form-control" name="bio" value="{{request.user.profile.bio}}" type="text" placeholder="Type here" />
+                                        </div>
+                                        <div class="col-lg-6 mb-3">
+                                            <label class="form-label">Address</label>
+                                            <input class="form-control" name="address" value="{{request.user.profile.address}}" type="text" placeholder="Type here" />
+                                        </div>
+                                        <div class="col-lg-6 mb-3">
+                                            <label class="form-label">Country</label>
+                                            <input class="form-control" name="country" value="{{request.user.profile.country}}" type="text" placeholder="Type here" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <aside class="col-lg-4">
+                                    <figure class="text-lg-center">
+                                        
+                                        {% if profile.image %}
+                                            <img class="img-lg mb-3 img-avatar" src="{{profile.image.url}}" alt="User Photo" />
+                                        {% else %}
+                                            <img class="img-lg mb-3 img-avatar" src="https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2281862025.jpg" alt="User Photo" />
+                                        {% endif %}
+                                            
+                                        <figcaption>
+                                            <input type="file" class="form-control-file" name="image">
+                                        </figcaption>
+                                    </figure>
+                                </aside>
+                            </div>
+                            <br />
+                            <button class="btn btn-primary" type="submit">Save changes</button>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}  

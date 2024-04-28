@@ -1,0 +1,159 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+    
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Shop <span></span> Checkout
+                </div>
+            </div>
+        </div>
+        <div class="container mb-80 mt-50">
+            <div class="row">
+                <div class="col-lg-8 mb-40">
+                    <h1 class="heading-2 mb-10">Checkout</h1>
+                    <div class="d-flex justify-content-between"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="row">
+                        {% for o in order_items %}
+                        <div class="col-lg-6 mb-2">
+                            <div class="card" style="max-width: 540px;">
+                                <div class="row g-0">
+                                    <div class="col-sm-4">
+                                        <img src="{{o.image}}" style="width: 100%; height: 100%; object-fit: cover;" class="rounded-start" alt="Card image" />
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{o.item}}</h5>
+                                            <p class="card-text fs-sm">Qty: {{ o.qty }}</p>
+                                            <p class="card-text fs-sm">Price: ${{ o.price }}</p>
+                                            <p class="card-text fs-sm">Total: ${{ o.total }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="border cart-totals mb-50">
+                        <div class="d-flex align-items-end justify-content-between mb-30">
+                            <h4>Order Summary</h4>
+                        </div>
+
+                        <div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Tax</p>
+                                <p>$0</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Shipping</p>
+                                <p>$0</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Discount</p>
+                                <p>${{ order.saved }}</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Total</p>
+                                <p>${{order.price}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-50">
+                        <div class="col-lg-12">
+                            <form method="POST" class="apply-coupon">
+                                {% csrf_token %}
+                                <input type="text" name="code" placeholder="Enter Coupon Code..." />
+                                <button class="btn btn-md" type="submit" name="login">Apply</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn w-100" id="checkout-button" style="background-color: blueviolet;">Pay With Stripe (Credit or Debit Card)</button>
+                    <div id="paypal-button-container" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        paypal
+            .Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [
+                            {
+                                amount: {
+                                    value: "{{order.price}}",
+                                },
+                            },
+                        ],
+                    });
+                },
+
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (Detail) {
+                        console.log(Detail);
+                        if (Detail.status === "COMPLETED") {
+                            window.location.href = `/payment-completed/{{ order.oid }}/?status=${Detail.status}`;
+                        }
+                    });
+                },
+            })
+            .render("#paypal-button-container");
+    </script>
+
+    <script>
+        var stripe = Stripe("{{stripe_publishable_key}}");
+        var checkoutButton = document.getElementById("checkout-button");
+
+        try {
+            checkoutButton.addEventListener("click", function () {
+            var email = "{{booking.email}}";
+
+            checkoutButton.innerHTML = "Processing <i class='fas fa-spinner fa-spin'></i>";
+
+            fetch("/api/create_checkout_session/{{order.oid}}/", {
+                method: "POST",
+                body: JSON.stringify({ email: email }),
+            })
+                .then(function (response) {
+                    console.log(response);
+                    console.log(stripe);
+                    return response.json();
+                })
+                .then(function (session) {
+                    return stripe.redirectToCheckout({ sessionId: session.sessionId });
+                })
+                .then(function (result) {
+                    if (result.error) {
+                        alert(result.error.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.log("Error: ", error);
+                });
+        });
+    
+    
+        } catch (error) {
+            console.log(error);
+        }
+    </script>
+
+
+{% endblock content %}
+    

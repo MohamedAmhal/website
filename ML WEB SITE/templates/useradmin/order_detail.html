@@ -1,0 +1,161 @@
+{% extends 'useradmin/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}  
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order detail</h2>
+            <p>Details for Order ID: 3453012</p>
+        </div>
+    </div>
+    <div class="card">
+        <header class="card-header">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                    <span> <i class="material-icons md-calendar_today"></i> <b>{{order.date}}</b> </span> <br />
+                    <small class="text-muted">Order ID: #{{order.oid}}</small>
+                </div>
+                <form method="POST" action="{% url 'useradmin:change_order_status' order.oid %}" class="col-lg-6 col-md-6 ms-auto text-md-end">
+                    {% csrf_token %}
+                    <select name="status" class="form-select d-inline-block mb-lg-0 mr-5 mw-200">
+                        <option value="pending">Change Order Status</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                    <button class="btn btn-primary" type="submit" >Save</button>
+                </form>
+            </div>
+        </header>
+        <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row mb-50 mt-20 order-info-wrap">
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-person"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Customer</h6>
+                            <p class="mb-1">
+                                {{order.full_name}} <br />
+                                {{order.email}} <br />
+                                {{order.phone}}
+                            </p>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-local_shipping"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Order info</h6>
+                            <p class="mb-1">
+                                Shipping Method: {{order.shipping_method}} <br />
+                                Order Id: #{{order.oid}} <br>
+                                Order Status: {{order.product_status|title}} <br>
+                                Payment Status: {% if order.paid_status == True %} Paid {% else %} Not Paid {% endif %} 
+                            </p>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+                <div class="col-md-4">
+                    <article class="icontext align-items-start">
+                        <span class="icon icon-sm rounded-circle bg-primary-light">
+                            <i class="text-primary material-icons md-place"></i>
+                        </span>
+                        <div class="text">
+                            <h6 class="mb-1">Deliver to</h6>
+                            <p class="mb-1">
+                                Address: {{order.address}} <br />
+                                City: {{order.city}} <br />
+                                State: {{order.state}} <br />
+                                Country: {{order.country}}
+                            </p>
+                        </div>
+                    </article>
+                </div>
+                <!-- col// -->
+            </div>
+            <!-- row // -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Product</th>
+                                    <th width="20%">Unit Price</th>
+                                    <th width="20%">Quantity</th>
+                                    <th width="20%" class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for o in order_items %}
+                                    <tr>
+                                        <td>
+                                            <a class="itemside" href="#">
+                                                <div class="left">
+                                                    <img src="{{o.image}}" style="border-radius: 4px;" width="40" height="40" class="img-xs" alt="Item" />
+                                                </div>
+                                                <div class="info">{{o.item}}</div>
+                                            </a>
+                                        </td>
+                                        <td>${{ o.price }}</td>
+                                        <td>{{ o.qty }}</td>
+                                        <td class="text-end">${{o.total}}</td>
+                                    </tr>
+                                {% endfor %}
+                                    
+                                
+                                <tr>
+                                    <td colspan="4">
+                                        <article class="float-end">
+                                            <dl class="dlist">
+                                                <dt>Tax:</dt>
+                                                <dd>$0</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Shipping cost:</dt>
+                                                <dd>$0</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Discount:</dt>
+                                                <dd>${{ order.saved }}</dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt>Grand total:</dt>
+                                                <dd><b class="h5">${{order.price}}</b></dd>
+                                            </dl>
+                                            <dl class="dlist">
+                                                <dt class="text-muted">Status:</dt>
+                                                <dd>
+                                                    
+                                                    {% if order.paid_status == True %}
+                                                        <span class="badge rounded-pill alert-success text-success">Paid</span>
+                                                    {% else %}
+                                                        <span class="badge rounded-pill alert-danger text-danger">Not Paid</span>
+                                                    {% endif %}
+                                                        
+                                                </dd>
+                                            </dl>
+                                        </article>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
